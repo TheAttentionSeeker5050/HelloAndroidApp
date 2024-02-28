@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">MyHelloApp</string>
+    <string name="app_name">My Hello App</string>
+    <string name="insert_name_message">Please insert your name</string>
+
 </resources>
