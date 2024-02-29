@@ -42,7 +42,6 @@ fun MyHelloApp() {
     var message by remember { mutableStateOf("") }
     var messageMode by remember { mutableStateOf(MESSAGE_MODE_INACTIVE) }
 
-//    var message by remember { mutableStateOf("Hello, ${myname.text}") }
 
     Scaffold (
         topBar = {
@@ -64,57 +63,72 @@ fun MyHelloApp() {
                     .fillMaxSize()
                     .padding(12.dp, 8.dp),
                 verticalArrangement = Arrangement.Top,
-
-
-                ) {
-                Text(
-                    text = stringResource(
-                        id = R.string.insert_name_message
-                    ),
-                    modifier = Modifier.padding(0.dp, 8.dp)
-                )
-
-                TextField(
-                    modifier = Modifier.padding(0.dp, 8.dp),
-                    value = myName,
-                    onValueChange = { newName -> myName = newName },
-                )
-
-                Button(onClick = {
-                    message = pressHiButton(myName)
-                }) {
-                    Text(text = "Say Hi")
-                }
-
-                Column (
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxSize(0.6F)
-                    ,
-                    verticalArrangement = Arrangement.SpaceEvenly
                 ) {
 
-                    Image(
-                        painter = painterResource(
-                            id = R.drawable.person_saying_hi_nobg
+                if (messageMode == MESSAGE_MODE_INACTIVE) {
+                    Text(
+                        text = stringResource(
+                            id = R.string.insert_name_message
                         ),
-                        contentDescription = "Person Saying Hi",
-                        modifier = Modifier
-                            .fillMaxSize(0.55F)
+                        modifier = Modifier.padding(0.dp, 8.dp)
                     )
 
-                    Text(
-                        text = message
+                    TextField(
+                        modifier = Modifier.padding(0.dp, 8.dp),
+                        value = myName,
+                        onValueChange = { newName -> myName = newName },
                     )
 
                     Button(onClick = {
-                        message = pressGoodByeButton(myName)
-                        myName = ""
+                        message = pressHiButton(myName)
+                        messageMode = MESSAGE_MODE_HI
                     }) {
-                        Text(text = "Say Goodbye")
+                        Text(text = "Say Hi")
                     }
+                } else {
 
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxSize(0.6F),
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
+
+                        Image(
+                            painter = painterResource(
+                                id = R.drawable.person_saying_hi_nobg
+                            ),
+                            contentDescription = "Person Saying Hi",
+                            modifier = Modifier
+                                .fillMaxSize(0.55F)
+                        )
+
+                        Text(
+                            text = message
+                        )
+
+                        if (messageMode == MESSAGE_MODE_HI) {
+
+
+                            Button(onClick = {
+                                message = pressGoodByeButton(myName)
+                                myName = ""
+                                messageMode = MESSAGE_MODE_BYE
+                            }) {
+                                Text(text = "Say Goodbye")
+                            }
+
+                        } else {
+                            Button(onClick = {
+                                message = ""
+                                myName = ""
+                                messageMode = MESSAGE_MODE_INACTIVE
+                            }) {
+                                Text(text = "Restart")
+                            }
+                        }
+                    }
                 }
 
             }
