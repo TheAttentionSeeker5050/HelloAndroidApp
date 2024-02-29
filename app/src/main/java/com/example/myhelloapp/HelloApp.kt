@@ -1,12 +1,10 @@
 package com.example.myhelloapp
 
-import android.annotation.SuppressLint
+import android.view.KeyEvent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,23 +23,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myhelloapp.ui.theme.MyHelloAppTheme
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 // This app holds the main container
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyHelloApp() {
     // make the state variable myname
-    var myName by remember { mutableStateOf("Nick") }
+    var myName by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
     var messageMode by remember { mutableStateOf(MESSAGE_MODE_INACTIVE) }
 
+    fun pressGoodByeButton() {
+        message = "Good Bye, ${myName}"
+        messageMode = MESSAGE_MODE_BYE
+    }
+
+    fun pressHiButton() {
+        message = "Hi, ${myName}"
+        messageMode = MESSAGE_MODE_HI
+    }
+
+    fun pressRestartButton() {
+        message = ""
+        myName = ""
+        messageMode = MESSAGE_MODE_INACTIVE
+    }
 
     Scaffold (
         topBar = {
@@ -50,7 +62,7 @@ fun MyHelloApp() {
                 colors = topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary
-                )
+                ),
             )
         },
         
@@ -62,7 +74,8 @@ fun MyHelloApp() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(12.dp, 8.dp),
-                verticalArrangement = Arrangement.Top,
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
                 if (messageMode == MESSAGE_MODE_INACTIVE) {
@@ -70,20 +83,32 @@ fun MyHelloApp() {
                         text = stringResource(
                             id = R.string.insert_name_message
                         ),
+                        style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(0.dp, 8.dp)
                     )
 
                     TextField(
-                        modifier = Modifier.padding(0.dp, 8.dp),
+                        modifier = Modifier
+                            .onKeyEvent {
+                                if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
+                                    pressHiButton()
+                                    true
+                                }
+                                false
+                            }
+                            .padding(0.dp, 8.dp),
                         value = myName,
                         onValueChange = { newName -> myName = newName },
+
                     )
 
                     Button(onClick = {
-                        message = pressHiButton(myName)
-                        messageMode = MESSAGE_MODE_HI
+                        pressHiButton()
                     }) {
-                        Text(text = "Say Hi")
+                        Text(
+                            text = "Say Hi",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 } else {
 
@@ -112,20 +137,22 @@ fun MyHelloApp() {
 
 
                             Button(onClick = {
-                                message = pressGoodByeButton(myName)
-                                myName = ""
-                                messageMode = MESSAGE_MODE_BYE
+                                pressGoodByeButton()
                             }) {
-                                Text(text = "Say Goodbye")
+                                Text(
+                                    text = "Say Goodbye",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
                             }
 
                         } else {
                             Button(onClick = {
-                                message = ""
-                                myName = ""
-                                messageMode = MESSAGE_MODE_INACTIVE
+                                pressRestartButton()
                             }) {
-                                Text(text = "Restart")
+                                Text(
+                                    text = "Restart",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
                             }
                         }
                     }
@@ -136,13 +163,7 @@ fun MyHelloApp() {
     }
 }
 
-fun pressGoodByeButton(name: String) : String {
-    return "Good Bye, ${name}"
-}
 
-fun pressHiButton(name: String) : String {
-    return "Hi, ${name}"
-}
 
 // the constants
 const val MESSAGE_MODE_INACTIVE: Int = 0
