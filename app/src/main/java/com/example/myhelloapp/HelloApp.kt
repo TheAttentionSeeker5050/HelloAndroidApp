@@ -38,8 +38,12 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 @Composable
 fun MyHelloApp() {
     // make the state variable myname
-    var myname by remember { mutableStateOf(TextFieldValue("Nick")) }
-    var message by remember { mutableStateOf("Hello, ${myname.text}") }
+    var myName by remember { mutableStateOf("Nick") }
+    var message by remember { mutableStateOf("") }
+    var messageMode by remember { mutableStateOf(MESSAGE_MODE_INACTIVE) }
+
+//    var message by remember { mutableStateOf("Hello, ${myname.text}") }
+
     Scaffold (
         topBar = {
             TopAppBar(
@@ -72,11 +76,13 @@ fun MyHelloApp() {
 
                 TextField(
                     modifier = Modifier.padding(0.dp, 8.dp),
-                    value = myname,
-                    onValueChange = { newName -> myname = newName },
+                    value = myName,
+                    onValueChange = { newName -> myName = newName },
                 )
 
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = {
+                    message = pressHiButton(myName)
+                }) {
                     Text(text = "Say Hi")
                 }
 
@@ -102,17 +108,32 @@ fun MyHelloApp() {
                         text = message
                     )
 
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = {
+                        message = pressGoodByeButton(myName)
+                        myName = ""
+                    }) {
                         Text(text = "Say Goodbye")
                     }
 
                 }
 
-
             }
         }
     }
 }
+
+fun pressGoodByeButton(name: String) : String {
+    return "Good Bye, ${name}"
+}
+
+fun pressHiButton(name: String) : String {
+    return "Hi, ${name}"
+}
+
+// the constants
+const val MESSAGE_MODE_INACTIVE: Int = 0
+const val MESSAGE_MODE_HI: Int = 1
+const val MESSAGE_MODE_BYE: Int = 2
 
 @Preview(showBackground = true)
 @Composable
