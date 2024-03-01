@@ -1,7 +1,5 @@
 package com.example.myhelloapp
 
-import android.util.Log
-import android.view.KeyEvent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -23,22 +23,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myhelloapp.ui.theme.MyHelloAppTheme
 
 // This app holds the main container
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MyHelloApp() {
     // make the state variable myname
     var myName by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
     var messageMode by remember { mutableStateOf(MESSAGE_MODE_INACTIVE) }
+    var keyboardController = LocalSoftwareKeyboardController.current
 
     fun pressGoodByeButton() {
         message = "Good Bye, ${myName}"
@@ -72,92 +75,87 @@ fun MyHelloApp() {
             modifier = Modifier.padding(innerPadding)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp, 8.dp),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp, 8.dp),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                // new name form ------------------------------
+                Text(
+                    text = stringResource(
+                        id = R.string.insert_name_message
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(0.dp, 8.dp)
+                )
+
+                TextField(
+                    modifier = Modifier
+
+                        .padding(0.dp, 8.dp),
+                    value = myName,
+                    onValueChange = { newName ->
+                            myName = newName
+                    },
+
+                )
+
+                // message widget ------------------------------
+                Button(onClick = {
+                    pressHiButton()
+                }) {
+                    Text(
+                        text = "Say Hi",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize(0.6F),
+                    verticalArrangement = Arrangement.SpaceEvenly
                 ) {
 
-                if (messageMode == MESSAGE_MODE_INACTIVE) {
-                    Text(
-                        text = stringResource(
-                            id = R.string.insert_name_message
+                    Image(
+                        painter = painterResource(
+                            id = R.drawable.person_saying_hi_nobg
                         ),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(0.dp, 8.dp)
+                        contentDescription = "Person Saying Hi",
+                        modifier = Modifier
+                            .fillMaxSize(0.55F)
                     )
 
-                    TextField(
-                        modifier = Modifier
-                            .padding(0.dp, 8.dp),
-                        value = myName,
-                        onValueChange = { newName ->
-                            if (newName.contains("\n")) {
-                                pressHiButton()
-                            } else {
-                                myName = newName
-                            }
-                        },
-
+                    Text(
+                        text = message
                     )
 
-                    Button(onClick = {
-                        pressHiButton()
-                    }) {
-                        Text(
-                            text = "Say Hi",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                } else {
+                    // message button, can either be "say goodbye" or "restart"
+                    // depending on the message mode
+                    if (messageMode == MESSAGE_MODE_HI) {
+                        Button(onClick = {
+                            pressGoodByeButton()
+                        }) {
+                            Text(
+                                text = "Say Goodbye",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxSize(0.6F),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-
-                        Image(
-                            painter = painterResource(
-                                id = R.drawable.person_saying_hi_nobg
-                            ),
-                            contentDescription = "Person Saying Hi",
-                            modifier = Modifier
-                                .fillMaxSize(0.55F)
-                        )
-
-                        Text(
-                            text = message
-                        )
-
-                        if (messageMode == MESSAGE_MODE_HI) {
-
-
-                            Button(onClick = {
-                                pressGoodByeButton()
-                            }) {
-                                Text(
-                                    text = "Say Goodbye",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-
-                        } else {
-                            Button(onClick = {
-                                pressRestartButton()
-                            }) {
-                                Text(
-                                    text = "Restart",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
+                    } else {
+                        Button(onClick = {
+                            pressRestartButton()
+                        }) {
+                            Text(
+                                text = "Restart",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                         }
                     }
                 }
-
             }
         }
     }
