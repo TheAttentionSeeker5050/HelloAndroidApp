@@ -1,5 +1,6 @@
 package com.example.myhelloapp
 
+import android.util.Log
 import android.view.KeyEvent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -89,16 +90,15 @@ fun MyHelloApp() {
 
                     TextField(
                         modifier = Modifier
-                            .onKeyEvent {
-                                if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
-                                    pressHiButton()
-                                    true
-                                }
-                                false
-                            }
                             .padding(0.dp, 8.dp),
                         value = myName,
-                        onValueChange = { newName -> myName = newName },
+                        onValueChange = { newName ->
+                            if (newName.contains("\n")) {
+                                pressHiButton()
+                            } else {
+                                myName = newName
+                            }
+                        },
 
                     )
 
