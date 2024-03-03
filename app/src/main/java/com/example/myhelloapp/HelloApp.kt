@@ -44,19 +44,18 @@ fun MyHelloApp() {
     var keyboardController = LocalSoftwareKeyboardController.current
 
     fun pressGoodByeButton() {
-        message = "Good Bye, ${myName}"
-        messageMode = MESSAGE_MODE_BYE
+        // change the state variables when pressing the "say good bye" button
+
     }
 
     fun pressHiButton() {
-        message = "Hi, ${myName}"
-        messageMode = MESSAGE_MODE_HI
+        // change the state variables when pressing the "say hi" button
+
     }
 
     fun pressRestartButton() {
-        message = ""
-        myName = ""
-        messageMode = MESSAGE_MODE_INACTIVE
+        // change the state variables when pressing the "restart" button
+
     }
 
     Scaffold (
@@ -69,6 +68,7 @@ fun MyHelloApp() {
                 ),
             )
         },
+
         
     ) {innerPadding ->
         Box(
@@ -82,36 +82,27 @@ fun MyHelloApp() {
             horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
+                // --------------------------------------------
                 // new name form ------------------------------
-                Text(
-                    text = stringResource(
-                        id = R.string.insert_name_message
-                    ),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(0.dp, 8.dp)
-                )
+                // --------------------------------------------
 
-                TextField(
-                    modifier = Modifier
 
-                        .padding(0.dp, 8.dp),
-                    value = myName,
-                    onValueChange = { newName ->
-                            myName = newName
-                    },
+                // the text label ---------------
+                // containing the "insert name" guide message
 
-                )
+
+
+                // the text field ---------------
+                // here the user inserts its name
+
+
+                // the button to say hi -----------
+                // when pressed, you will receive a response back
+                // saying hi, {your name}
+
+
 
                 // message widget ------------------------------
-                Button(onClick = {
-                    pressHiButton()
-                }) {
-                    Text(
-                        text = "Say Hi",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -120,40 +111,24 @@ fun MyHelloApp() {
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
 
-                    Image(
-                        painter = painterResource(
-                            id = R.drawable.person_saying_hi_nobg
-                        ),
-                        contentDescription = "Person Saying Hi",
-                        modifier = Modifier
-                            .fillMaxSize(0.55F)
-                    )
+                    // image composable ---------
 
-                    Text(
-                        text = message
-                    )
+
+
+                    // the message content -----------
+                    // we use text components here to display the message
+                    // the content will be updated as we update our app state
+
+
 
                     // message button, can either be "say goodbye" or "restart"
                     // depending on the message mode
                     if (messageMode == MESSAGE_MODE_HI) {
-                        Button(onClick = {
-                            pressGoodByeButton()
-                        }) {
-                            Text(
-                                text = "Say Goodbye",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
+                        // say goodbye button -------------
 
                     } else {
-                        Button(onClick = {
-                            pressRestartButton()
-                        }) {
-                            Text(
-                                text = "Restart",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
+                        // restart button ---------------
+
                     }
                 }
             }
