@@ -37,12 +37,21 @@ import com.example.myhelloapp.ui.theme.MyHelloAppTheme
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MyHelloApp() {
-    // make the state variable myname
+    // --------------------------------------------
+    // state variables and keyboard controller ------------------------------
+    // --------------------------------------------
+
     var myName by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
     var messageMode by remember { mutableStateOf(MESSAGE_MODE_INACTIVE) }
     var keyboardController = LocalSoftwareKeyboardController.current
 
+    // end of state variables and the keyboard controller
+
+
+    // --------------------------------------------
+    // function handlers ------------------------------
+    // --------------------------------------------
     fun pressGoodByeButton() {
         // change the state variables when pressing the "say good bye" button
 
@@ -102,7 +111,11 @@ fun MyHelloApp() {
 
 
 
+                // end of new name form ---------------------------------
+
+                // --------------------------------------------
                 // message widget ------------------------------
+                // --------------------------------------------
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -131,6 +144,8 @@ fun MyHelloApp() {
 
                     }
                 }
+                // end of message widget ---------------------------------
+
             }
         }
     }
